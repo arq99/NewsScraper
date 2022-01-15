@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import scrapy
 from newsapi import NewsApiClient
@@ -8,7 +9,7 @@ from ..items import LinkItem
 
 
 class NewsSpider(scrapy.Spider):
-    name = "links"
+    name = "news"
 
     def start_requests(self):
         load_dotenv(find_dotenv())
@@ -17,8 +18,7 @@ class NewsSpider(scrapy.Spider):
         all_articles = newsapi.get_everything(
             sources='abc-news',
             domains='abc-news.go.com',
-            from_param='2022-01-01',
-            to='2022-01-02',
+            from_param=datetime.today().strftime('%Y-%m-%d'),
             language='en',
             page_size=100
         )
@@ -27,8 +27,10 @@ class NewsSpider(scrapy.Spider):
             source = data['source']['name']
             url = data['url']
             title = data['title']
-            url_to_image = data['urlToImage']
-            published_at = data['publishedAt']
+            published_at = datetime.fromisoformat(
+                data['publishedAt']
+                .replace('Z', '+00:00')
+            )
 
             yield scrapy.Request(
                 url=url,
@@ -37,8 +39,7 @@ class NewsSpider(scrapy.Spider):
                     'source': source,
                     'url': url,
                     'title': title,
-                    'urltoimage': url_to_image,
-                    'publishedat': published_at,
+                    'publishedAt': published_at,
                 }
             )
 
@@ -48,10 +49,7 @@ class NewsSpider(scrapy.Spider):
         link['source'] = response.meta['source']
         link['url'] = response.meta['url']
         link['title'] = response.meta['title']
-        link['urltoimage'] = response.meta['urltoimage']
-        link['date'] = response.meta['publishedat']
+        link['date'] = response.meta['publishedAt']
         link['article'] = response.css('section.Article__Content p::text').getall()
-
-        print(link)
 
         yield link
