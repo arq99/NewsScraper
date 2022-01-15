@@ -1,19 +1,24 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+import random
+from datetime import datetime
 
-
-# useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
 from google.cloud import firestore
+from google.oauth2 import service_account
 
 
-class LinksPipeline:
-
+class FirestorePipeline:
     def __init__(self):
-        db = firestore.Client(project='my-project-id')
+        credentials = service_account.Credentials.from_service_account_file("newssearch-cred.json")
+        self.db = firestore.Client(project='newssearch-338106', credentials=credentials)
 
     def process_item(self, item, spider):
-        print("__________________________________________")
+        #doc_ref = self.db.collection(u'news-article-links')\
+        #    .document(f'{datetime.today().strftime("%Y-%m-%d")}')
+
+        #a = doc_ref.collection(f'{random.randint(100000, 999999)}')\
+        #    .document(f'link')
+
+        #a.set({
+        #    u'link': item['link'],
+        #    u'date': item['date']
+        #})
         return item
