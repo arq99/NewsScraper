@@ -2,8 +2,9 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  schedule:
-    - cron: "0 23 * * *"
+  push:
+    branches:
+      - main
 
 jobs:
   build:
