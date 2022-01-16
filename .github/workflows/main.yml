@@ -23,5 +23,5 @@ jobs:
       - name: run scraper
         run: |
           scrapy crawl news
-        env: ${{NEWS_API_KEY}}
+        env: ${{secrets.NEWS_API_KEY}}
             
