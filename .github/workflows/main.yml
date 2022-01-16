@@ -1,0 +1,26 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  schedule:
+    - cron: "0 23 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: run scraper
+        run: |
+          scrapy crawl news
+        env: ${{NEWS_API_KEY}}
+            
