@@ -1,27 +1,29 @@
-import random
-from datetime import datetime
+import os
 
-from google.cloud import firestore
-from google.oauth2 import service_account
+from pymongo import MongoClient
+from dotenv import load_dotenv, find_dotenv
 
 
 class FirestorePipeline:
     def __init__(self):
-        credentials = service_account.Credentials.from_service_account_file("newssearch-cred.json")
-        self.db = firestore.Client(project='newssearch-338106', credentials=credentials)
+        load_dotenv(find_dotenv())
+        client = MongoClient(f"mongodb+srv://"
+                             f"{os.environ.get('MDB_USERNAME')}:"
+                             f"{os.environ.get('MDB_PASSWORD')}"
+                             f"@news-search.kpgz8.mongodb.net/News-Search?retryWrites=true&w=majority")
+        self.db = client.newsarticles
 
     def process_item(self, item, spider):
-        doc_ref = self.db.collection(u'news-articles')\
-            .document(f'{datetime.today().strftime("%Y-%m-%d")}')
+        newsarticle = {
+            'source': item['source'],
+            'url': item['url'],
+            'title': item['title'],
+            'date': item['date'],
+            'summary': item['summary'],
+        }
 
-        a = doc_ref.collection(f'{random.randint(100000, 999999)}')\
-            .document(f'article-data')
+        self.db.articles.insert_one(newsarticle)
 
-        a.set({
-            u'source': item['source'],
-            u'url': item['url'],
-            u'title': item['title'],
-            u'date': item['date'],
-            u'article': item['article'],
-        })
         return item
+
+

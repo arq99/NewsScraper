@@ -27,10 +27,7 @@ class NewsSpider(scrapy.Spider):
             source = data['source']['name']
             url = data['url']
             title = data['title']
-            published_at = datetime.fromisoformat(
-                data['publishedAt']
-                .replace('Z', '+00:00')
-            )
+            published_at = data['publishedAt']
 
             yield scrapy.Request(
                 url=url,
@@ -50,6 +47,6 @@ class NewsSpider(scrapy.Spider):
         link['url'] = response.meta['url']
         link['title'] = response.meta['title']
         link['date'] = response.meta['publishedAt']
-        link['article'] = response.css('section.Article__Content p::text').getall()
+        link['summary'] = response.css('p.Article__Headline__Desc::text').getall()
 
         yield link

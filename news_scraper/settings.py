@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'news_scraper.pipelines.FirestorePipeline': 300,
+    'news_scraper.pipelines.FirestorePipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
