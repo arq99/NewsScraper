@@ -16,8 +16,8 @@ class NewsSpider(scrapy.Spider):
         newsapi = NewsApiClient(api_key=os.getenv('NEWS_API_KEY'))
 
         all_articles = newsapi.get_everything(
-            sources='abc-news',
-            domains='abc-news.go.com',
+            sources="abc-news",
+            domains="abc-news.go.com",
             from_param=datetime.today().strftime('%Y-%m-%d'),
             language='en',
             page_size=100
@@ -47,6 +47,6 @@ class NewsSpider(scrapy.Spider):
         link['url'] = response.meta['url']
         link['title'] = response.meta['title']
         link['date'] = response.meta['publishedAt']
-        link['summary'] = response.css('p.Article__Headline__Desc::text').getall()
+        link['article'] = response.css('section.Article__Content p ::text').getall()
 
         yield link

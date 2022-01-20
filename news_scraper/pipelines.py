@@ -14,15 +14,15 @@ class FirestorePipeline:
         self.db = client.newsarticles
 
     def process_item(self, item, spider):
-        newsarticle = {
+        news_article = {
             'source': item['source'],
             'url': item['url'],
             'title': item['title'],
             'date': item['date'],
-            'summary': item['summary'],
+            'article': item['article'],
         }
 
-        self.db.articles.insert_one(newsarticle)
+        #self.db.articles.insert_one(news_article)
 
         return item
 
