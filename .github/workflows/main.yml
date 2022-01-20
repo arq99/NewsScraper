@@ -20,9 +20,9 @@ jobs:
           pip install -r requirements.txt
           python -m pip install "pymongo[srv]"
       - name: run scraper
+        env:
+          NEWS_API_KEY: ${{secrets.NEWS_API_KEY}}
+          MDB_USERNAME: ${{secrets.MDB_USERNAME}}
+          MDB_PASSWORD: ${{secrets.MDB_PASSWORD}}
         run: |
           scrapy crawl news
-        env:
-          ${{secrets.NEWS_API_KEY}}
-          ${{secrets.MDB_USERNAME}}
-          ${{secrets.MDB_PASSWORD}}
