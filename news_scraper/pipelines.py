@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv, find_dotenv
 
 
-class FirestorePipeline:
+class MongoDBPipeline:
     def __init__(self):
         load_dotenv(find_dotenv())
         client = MongoClient(f"mongodb+srv://"
@@ -22,8 +22,6 @@ class FirestorePipeline:
             'article': item['article'],
         }
 
-        #self.db.articles.insert_one(news_article)
+        self.db.articles.insert_one(news_article)
 
         return item
-
-

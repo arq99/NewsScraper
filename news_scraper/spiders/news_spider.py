@@ -6,6 +6,7 @@ from newsapi import NewsApiClient
 from dotenv import load_dotenv, find_dotenv
 
 from ..items import LinkItem
+from ..specifications import specs
 
 
 class NewsSpider(scrapy.Spider):
@@ -15,30 +16,34 @@ class NewsSpider(scrapy.Spider):
         load_dotenv(find_dotenv())
         newsapi = NewsApiClient(api_key=os.getenv('NEWS_API_KEY'))
 
-        all_articles = newsapi.get_everything(
-            sources="abc-news",
-            domains="abc-news.go.com",
-            from_param=datetime.today().strftime('%Y-%m-%d'),
-            language='en',
-            page_size=100
-        )
-
-        for data in all_articles['articles']:
-            source = data['source']['name']
-            url = data['url']
-            title = data['title']
-            published_at = data['publishedAt']
-
-            yield scrapy.Request(
-                url=url,
-                callback=self.parse,
-                meta={
-                    'source': source,
-                    'url': url,
-                    'title': title,
-                    'publishedAt': published_at,
-                }
+        for spec in specs.specs:
+            data = newsapi.get_everything(
+                sources=specs.specs[spec]['sources'],
+                domains=specs.specs[spec]['domains'],
+                from_param=datetime.today().strftime('%Y-%m-%d'),
+                language='en',
+                page_size=100
             )
+
+            data = data['articles']
+
+            for article in data:
+                source = article['source']['name']
+                url = article['url']
+                title = article['title']
+                published_at = article['publishedAt']
+
+                yield scrapy.Request(
+                    url=url,
+                    callback=self.parse,
+                    meta={
+                        'source': source,
+                        'url': url,
+                        'title': title,
+                        'publishedAt': published_at,
+                        'article' : specs.specs[spec]['article']
+                    }
+                )
 
     def parse(self, response):
         link = LinkItem()
@@ -47,6 +52,6 @@ class NewsSpider(scrapy.Spider):
         link['url'] = response.meta['url']
         link['title'] = response.meta['title']
         link['date'] = response.meta['publishedAt']
-        link['article'] = response.css('section.Article__Content p ::text').getall()
+        link['article'] = response.css(response.meta['article']).getall()
 
         yield link
