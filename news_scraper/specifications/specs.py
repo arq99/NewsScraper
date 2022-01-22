@@ -19,4 +19,34 @@ specs = {
         "domains": "time.com",
         "article": "div.article p ::text"
     },
+    "engadget": {
+        "sources": "engadget",
+        "domains": "engadget.com",
+        "article": "div.article-text p ::text"
+    },
+    "entertainment-weekly": {
+        "sources": "entertainment-weekly",
+        "domains": "ew.com",
+        "article": "div.articleContainer__content p ::text"
+    },
+    "espn": {
+        "sources": "espn",
+        "domains": "espn.com",
+        "article": "div.article-body p ::text"
+    },
+    "financial-post": {
+        "sources": "financial-post",
+        "domains": "financialpost.com",
+        "article": "article.article-content-story p ::text"
+    },
+    "fortune": {
+        "sources": "fortune",
+        "domains": "fortune.com",
+        "article": "div.instream-content-0 p ::text"
+    },
+    "fox-news": {
+        "sources": "fox-news",
+        "domains": "foxnews.com",
+        "article": "div.article-body p ::text"
+    },
 }
