@@ -39,14 +39,4 @@ specs = {
         "domains": "financialpost.com",
         "article": "article.article-content-story p ::text"
     },
-    "fortune": {
-        "sources": "fortune",
-        "domains": "fortune.com",
-        "article": "div.instream-content-0 p ::text"
-    },
-    "fox-news": {
-        "sources": "fox-news",
-        "domains": "foxnews.com",
-        "article": "div.article-body p ::text"
-    },
 }

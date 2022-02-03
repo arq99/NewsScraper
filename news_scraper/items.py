@@ -7,4 +7,3 @@ class LinkItem(scrapy.Item):
     title = scrapy.Field()
     date = scrapy.Field()
     article = scrapy.Field()
-    summary = scrapy.Field()

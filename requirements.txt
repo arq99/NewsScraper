@@ -45,3 +45,5 @@ typing_extensions==4.0.1
 urllib3==1.26.8
 w3lib==1.22.0
 zope.interface==5.4.0
+nltk==3.6.7
+boto3==1.20.47

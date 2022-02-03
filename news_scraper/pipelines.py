@@ -1,27 +1,21 @@
-import os
-
-from pymongo import MongoClient
-from dotenv import load_dotenv, find_dotenv
+import boto3
 
 
-class MongoDBPipeline:
+class DynamoDBPipeline:
     def __init__(self):
-        load_dotenv(find_dotenv())
-        client = MongoClient(f"mongodb+srv://"
-                             f"{os.environ.get('MDB_USERNAME')}:"
-                             f"{os.environ.get('MDB_PASSWORD')}"
-                             f"@news-search.kpgz8.mongodb.net/News-Search?retryWrites=true&w=majority")
-        self.db = client.newsarticles
+        dynamodb = boto3.resource('dynamodb')
+        self.table = dynamodb.Table('news-articles')
 
     def process_item(self, item, spider):
-        news_article = {
-            'source': item['source'],
-            'url': item['url'],
-            'title': item['title'],
-            'date': item['date'],
-            'article': item['article'],
-        }
-
-        self.db.articles.insert_one(news_article)
+        self.table.put_item(
+            Item={
+                'source': item['source'],
+                'url': item['url'],
+                'title': item['title'],
+                'date': item['date'],
+                'article': item['article'],
+            }
+        )
 
         return item
+

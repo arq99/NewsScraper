@@ -63,8 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-#    'news_scraper.pipelines.SummaryPipeline': 100,
-    'news_scraper.pipelines.MongoDBPipeline': 200,
+    'news_scraper.pipelines.DynamoDBPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
