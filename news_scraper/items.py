@@ -6,4 +6,5 @@ class LinkItem(scrapy.Item):
     url = scrapy.Field()
     title = scrapy.Field()
     date = scrapy.Field()
+    image = scrapy.Field()
     article = scrapy.Field()
