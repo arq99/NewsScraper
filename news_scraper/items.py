@@ -8,3 +8,4 @@ class LinkItem(scrapy.Item):
     date = scrapy.Field()
     image = scrapy.Field()
     article = scrapy.Field()
+    keywords = scrapy.Field()
