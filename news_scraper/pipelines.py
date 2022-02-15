@@ -34,7 +34,8 @@ class MongoDBPipeline:
             'keywords': item['keywords'],
         }
 
-        if self.find_duplicate(item) is None and item['image'] is not None:
+
+        if self.find_duplicate(item) is None and item['image'] != 'null':
             self.db.articles.insert_one(news_article)
 
         return item
