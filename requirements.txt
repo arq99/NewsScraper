@@ -17,11 +17,6 @@ cycler==0.11.0
 decorator==5.1.0
 dnspython==2.2.0
 empyrical==0.5.5
-google-api-core==2.4.0
-google-auth==2.3.3
-google-cloud-core==2.2.1
-google-cloud-firestore==2.3.4
-googleapis-common-protos==1.54.0
 grpcio==1.43.0
 grpcio-status==1.43.0
 h2==3.2.0
@@ -90,7 +85,7 @@ tqdm==4.62.3
 traitlets==5.1.1
 Twisted==22.2.0
 typing_extensions==4.0.1
-urllib3==1.26.8
+urllib3==1.26.13
 userpath==1.7.0
 w3lib==1.22.0
 wcwidth==0.2.5

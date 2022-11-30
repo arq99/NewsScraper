@@ -26,39 +26,17 @@ class MongoDBPipeline:
     def process_item(self, item, spider):
 
         news_article = {
-            'source': item['source'],
-            'url': item['url'],
             'title': item['title'],
-            'date': item['date'],
-            'image': item['image'],
+            'url': item['url'],
             'keywords': item['keywords'],
+            'description': item['description'],
+            'content': item['content'],
+            'publishedAt': item['publishedAt'],
+            'image': item['image'],
         }
 
 
         if self.find_duplicate(item) is None and item['image'] != 'null':
             self.db.articles.insert_one(news_article)
-
-        return item
-
-# Pipeline to extract keywords from the article using TfidfVectorizer
-class KeywordExtractionPipeline:
-    def __init__(self):
-        kw_extractor = yake.KeywordExtractor()
-        self.custom_kw_extractor = yake.KeywordExtractor(
-            lan="en", 
-            n=3, 
-            dedupLim=0.9, 
-            top=20, 
-            features=None
-        )
-
-    def process_item(self, item, spider):
-        text = ""
-        for sentence in item['article']:
-            text += sentence
-        
-        keywords = self.custom_kw_extractor.extract_keywords(text)
-
-        item['keywords'] = keywords
 
         return item
