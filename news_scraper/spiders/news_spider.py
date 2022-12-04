@@ -20,7 +20,6 @@ class NewsSpider(scrapy.Spider):
         response = requests.get(url).json()
 
         for article in response['results']:
-            print(article['title'])
             yield scrapy.Request(
                 url=article['link'],
                 callback=self.parse,
