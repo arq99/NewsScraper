@@ -3,48 +3,27 @@ import os
 from pymongo import MongoClient
 import boto3
 
-import pandas as pd
+import re
+
+from newspaper import Article
 
 from dotenv import load_dotenv, find_dotenv
 
-class MongoDBPipeline:
-
-    def __init__(self):
-        load_dotenv(find_dotenv())
-        
-        client = MongoClient(
-            f"mongodb+srv://"
-            f"{os.environ.get('MDB_USERNAME')}:"
-            f"{os.environ.get('MDB_PASSWORD')}"
-            f"@news-search.kpgz8.mongodb.net/News-Search?retryWrites=true&w=majority")
-    
-        self.db = client.newsarticles
-    
-    # Check if the item is already in the database
-    def find_duplicate(self, item):
-        return self.db.articles.find_one({'url': item['url']})
+class ContentExtractorPipeline:
 
     def process_item(self, item, spider):
 
-        # Skip if description is empty
-        if item['description'] == '':
-            return item
+        url = item['url']
+        article = Article(url, keep_article_html=True)
+        article.download()
+        article.parse()
 
-        news_article = {
-            'title': item['title'],
-            'url': item['url'],
-            'keywords': item['keywords'],
-            'description': item['description'],
-            'content': item['content'],
-            'publishedAt': item['publishedAt'],
-            'image': item['image'],
-        }
-
-
-        if self.find_duplicate(item) is None and item['image'] != 'null':
-            self.db.articles.insert_one(news_article)
+        a = article.article_html
+        # Set the content
+        item['content'] = a
 
         return item
+
 
 class DynamoDBPipeline:
 
@@ -56,26 +35,90 @@ class DynamoDBPipeline:
 
     def process_item(self, item, spider):
 
-        # Skip if description is empty
-        if item['description'] == '':
-            return item
+        print('------------------------------------')
+        print(item)
+        
+        # Get the date in format YYYY/MM/DD
+        date = str(item['publishedAt'])
+        date = date[:10]
+        date = date.replace('-', '/')
+
+        # Remove all special characters from the title using regex
+        title = item['title'].replace(' ', '-')
+        title = title.replace('?', '')
+        title = title.replace('!', '')
+        title = title.replace('(', '')
+        title = title.replace(')', '')
+
+        # Remove spaces from the title and replace with dashes
+        title = item['title'].replace(' ', '-')
+
+        # Using regex to remove all special characters from the title but keep spaces and dashes
+        title2 = re.sub(r'[^\w\s-]', '', title)
+
+        url = f'{date}/{title2}'
+
+        print(url)
 
         news_article = {
             'title': item['title'],
-            'url': item['url'],
-            'keywords': item['keywords'],
+            'url': url,
             'description': item['description'],
             'content': item['content'],
             'date': item['publishedAt'],
             'image': item['image'],
-            'category': 'latest',
+            'searchquery': 'latest',
         }
 
         # Check if the item is already in the database using the category and date and filter for url
         response = self.table.get_item(
             Key={
-                'category': 'latest',
+                'searchquery': 'latest',
                 'date': item['publishedAt']
+            }
+        )
+
+        if 'Item' not in response:
+            self.table.put_item(Item=news_article)
+
+        return item
+
+class DynamoDBPipeline2:
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        self.table = dynamodb.Table('articles')
+
+    def process_item(self, item, spider):
+        
+        # Get the date in format YYYY/MM/DD
+        date = str(item['publishedAt'])
+        date = date[:10]
+        date = date.replace('-', '/')
+
+        # Remove spaces from the title and replace with dashes
+        title = item['title'].replace(' ', '-')
+
+        # Using regex to remove all special characters from the title but keep spaces and dashes
+        title2 = re.sub(r'[^\w\s-]', '', title)
+
+        url = f'{date}/{title2}'
+
+        news_article = {
+            'id': url,
+            'title': item['title'],
+            'description': item['description'],
+            'content': item['content'],
+            'date': item['publishedAt'],
+            'image': item['image'],
+        }
+
+        # Check if the item is already in the database using the category and date and filter for url
+        response = self.table.get_item(
+            Key={
+                'id': url
             }
         )
 
