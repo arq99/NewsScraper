@@ -14,8 +14,7 @@ class NewsSpider(scrapy.Spider):
     def start_requests(self):
         load_dotenv(find_dotenv())
 
-
-        url = f'https://newsdata.io/api/1/news?apikey={os.getenv("NEWS_API_KEY")}&domain=cointelegraph'
+        url = f'https://newsdata.io/api/1/news?apikey={os.getenv("NEWS_API_KEY")}&domain=cointelegraph,decrypt'
         response = requests.get(url).json()
 
         for article in response['results']:
@@ -31,6 +30,8 @@ class NewsSpider(scrapy.Spider):
                     'image': article['image_url']
                 }
             )
+            break
+            
 
     def parse(self, response):
         link = LinkItem()

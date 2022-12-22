@@ -84,7 +84,6 @@ class DynamoDBPipeline:
         return item
 
 class DynamoDBPipeline2:
-
     def __init__(self):
         load_dotenv(find_dotenv())
         
